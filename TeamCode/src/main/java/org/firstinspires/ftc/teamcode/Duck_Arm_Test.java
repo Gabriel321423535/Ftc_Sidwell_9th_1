@@ -135,7 +135,7 @@ public class Duck_Arm_Test extends OpMode
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        telemetry.addData("Motors", "claw motor (%.2f), duck motor (%.2f)", claw_pow, duck_motor);
     }
 
     /*
