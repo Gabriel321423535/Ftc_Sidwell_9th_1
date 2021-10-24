@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -35,6 +35,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.RobotHardware;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -50,14 +52,14 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Claw Duck Test", group="Iterative Opmode")
-public class Duck_Arm_Test extends OpMode
+@TeleOp(name="Driving", group="Iterative Opmode")
+
+public class BasicOpMode_Iterative extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor claw = null;
-    private DcMotor duck_motor = null;
-
+    RobotHardware robot = new RobotHardware();
+    int servoPower = 0;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -65,16 +67,6 @@ public class Duck_Arm_Test extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        claw  = hardwareMap.get(DcMotor.class, "claw");
-        duck_motor = hardwareMap.get(DcMotor.class, "duck");
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        claw.setDirection(DcMotor.Direction.FORWARD);
-        duck_motor.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -101,27 +93,36 @@ public class Duck_Arm_Test extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double duck_pow;
-        double claw_pow;
+        double leftPower;
+        double rightPower;
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
-        if (gamepad1.a){
-            duck_motor.setPower(1.0);
+        double drive = -gamepad1.left_stick_y;
+        double turn  =  gamepad1.right_stick_x;
+        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+
+        // Getting other game control inputs
+        double armPower = 0;
+        if (gamepad1.dpad_up){
+            armPower = 0.2;
         }
-        else{
-            duck_motor.setPower(0.0);
+        else if (gamepad1.dpad_down){
+            armPower = -0.2;
         }
 
-        if (gamepad1.b){
-            claw.setPower(1.0);
+        //Setting arm servo low limit = -135, high limit = 135
+        if (gamepad1.dpad_left){
+            servoPower += 5;
         }
-        else{
-            claw.setPower(0.0);
+        else if (gamepad1.dpad_right){
+            servoPower -= 5;
         }
+
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -129,11 +130,19 @@ public class Duck_Arm_Test extends OpMode
         // rightPower = -gamepad1.right_stick_y ;
 
         // Send calculated power to wheels
-
+        robot.back_left.setPower(leftPower);
+        robot.back_right.setPower(leftPower);
+        robot.front_left.setPower(rightPower);
+        robot.front_right.setPower(rightPower);
+        // Set arm power
+        robot.arm_motor.setPower(armPower);
+        // Set servo power
+        robot.arm_servo.setPosition(servoPower);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "claw motor (%.2f), duck motor (%.2f)", 0.1, 0.2);
+        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        telemetry.addData("Arm", "Arm Motor (%.2f), Arm Servo (%.2f)", armPower, servoPower);
     }
 
     /*
