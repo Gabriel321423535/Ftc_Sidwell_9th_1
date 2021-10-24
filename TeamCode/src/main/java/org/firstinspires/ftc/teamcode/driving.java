@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 
 @TeleOp(name="Driving", group="Iterative Opmode")
 
-public class BasicOpMode_Iterative extends OpMode
+public class driving extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
