@@ -41,7 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * This file allustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is stjuctured as a LinearOpMode
+ * The code is stjuctured as a Lin earOpMode
  *
  * The code REQUIRES that you DO have encoders on the wheels,
  *   otherwise you would use: PushbotAutoDriveByTime;
