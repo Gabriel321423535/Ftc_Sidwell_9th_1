@@ -27,129 +27,181 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.RobotHardware;
+import org.firstinspires.ftc.teamcode.RobotHardwareOP;
+import org.firstinspires.ftc.teamcode.PushbotAutoDriveByEncoder_Linear;
+
+
+
 
 /**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
+ * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
+ * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
  * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
+ * It includes all the skeletal structure that all linear OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Driving", group="Iterative Opmode")
+@TeleOp(name="Driving_2", group="Linear Opmode")
 
-public class driving extends OpMode
-{
+public class driving extends LinearOpMode {
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
-    int servoPower = 0;
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
+
+    // Encoder things
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+                                                        (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
+
+
+
     @Override
-    public void init() {
+    public void runOpMode() {
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        robot.init(hardwareMap);
 
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
-    }
-
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
-    @Override
-    public void init_loop() {
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
-    @Override
-    public void start() {
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
         runtime.reset();
+
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+
+            // Setup a variable for each drive wheel to save power level for telemetry
+            double leftPower;
+            double rightPower;
+            double clawPower;
+            int servoAngle;
+            servoAngle = 40;
+
+            // Choose to drive using either Tank Mode, or POV Mode
+            // Comment out the method that's not used.  The default below is POV.
+
+            // POV Mode uses left stick to go forward, and right stick to turn.
+            // - This uses basic math to combine motions and is easier to drive straight.
+            double drive = -gamepad1.left_stick_y;
+            double turn = gamepad1.left_stick_x;
+            leftPower = Range.clip(drive + turn, -1.0, 1.0);
+            rightPower = Range.clip(drive - turn, -1.0, 1.0);
+
+            // Get Claw power
+            if (gamepad1.dpad_up) {
+                clawPower = 1;
+            } else if (gamepad1.dpad_down) {
+                clawPower = -1;
+            } else {
+                clawPower = 0;
+            }
+
+            // Get servo power
+            if (gamepad1.dpad_left) {
+                servoAngle += 10;
+            } else if (gamepad1.dpad_right) {
+                servoAngle += -10;
+            }
+
+
+            // Tank Mode uses one stick to control each wheel.
+            // - This requires no math, but it is hard to drive forward slowly and keep straight.
+            // leftPower  = -gamepad1.left_stick_y ;
+            // rightPower = -gamepad1.right_stick_y ;
+
+            // Send calculated power to wheels
+            //Left power
+            robot.back_left.setPower(leftPower);
+            robot.front_left.setPower(leftPower);
+
+            //Right power
+            robot.back_right.setPower(rightPower);
+            robot.front_right.setPower(rightPower);
+
+            //Set claw and servo
+            robot.arm_servo.setPosition(servoAngle);
+            //encoderDrive(DRIVE_SPEED, 1, 1, 3.0);
+
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.update();
+        }
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
-    @Override
-    public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
+// Encoder drive
+    public void encoderDrive(double speed,
+                            double leftInches, double rightInches,
+                            double timeoutS) {
+            int arm_power_target;
 
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
+            // Ensure that the opmode is still active
+            if (opModeIsActive()) {
 
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
-        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-        // Getting other game control inputs
-        double armPower = 0;
-        if (gamepad1.dpad_up){
-            armPower = 0.2;
-        }
-        else if (gamepad1.dpad_down){
-            armPower = -0.2;
-        }
-
-        //Setting arm servo low limit = -135, high limit = 135
-        if (gamepad1.dpad_left){
-            servoPower += 5;
-        }
-        else if (gamepad1.dpad_right){
-            servoPower -= 5;
-        }
+                // Determine new target position, and pass to motor controller
+                arm_power_target = robot.arm_motor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+                robot.arm_motor.setTargetPosition(arm_power_target);
 
 
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
+                // Turn On RUN_TO_POSITION
+                robot.arm_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Send calculated power to wheels
-        robot.back_left.setPower(leftPower);
-        robot.back_right.setPower(leftPower);
-        robot.front_left.setPower(rightPower);
-        robot.front_right.setPower(rightPower);
-        // Set arm power
-        robot.arm_motor.setPower(armPower);
-        // Set servo power
-        robot.arm_servo.setPosition(servoPower);
 
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-        telemetry.addData("Arm", "Arm Motor (%.2f), Arm Servo (%.2f)", armPower, servoPower);
+                // reset the timeout time and start motion.
+                runtime.reset();
+                robot.arm_motor.setPower(Math.abs(speed));
+
+
+                // keep looping while we are still active, and there is time left, and both motors are running.
+                // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+                // its target position, the motion will stop.  This is "safer" in the event that the robot will
+                // always end the motion as soon as possible.
+                // However, if you require that BOTH motors have finished their moves before the robot continues
+                // onto the next step, use (isBusy() || isBusy()) in the loop test.
+                while (opModeIsActive() &&
+                        (runtime.seconds() < timeoutS) &&
+                        (robot.arm_motor.isBusy())) {
+
+                    // Display it for the driver.
+                    telemetry.addData("Path1",  "Running to %7d :%7d", arm_power_target);
+                    telemetry.addData("Path2",  "Running at %7d :%7d", robot.arm_motor.getCurrentPosition());
+                    telemetry.update();
+                }
+
+                // Stop all motion;
+                robot.arm_motor.setPower(0);
+
+
+                // Turn off RUN_TO_POSITION
+                robot.arm_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+                //  sleep(250);   // optional pause after each move
+            }
+
     }
-
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-    }
-
 }

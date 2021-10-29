@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -8,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-public class RobotHardware {
+public class RobotHardwareOP {
     //Instantiate motors and servos
     public DcMotor back_left;
     public DcMotor back_right;
@@ -22,39 +24,39 @@ public class RobotHardware {
 
     HardwareMap hardwareMap;
 
-    public void init(HardwareMap hardwareMap) {
+    public void init(@NonNull HardwareMap hardwareMap) {
         back_left = hardwareMap.get(DcMotor.class, "back_left");
         back_right = hardwareMap.get(DcMotor.class, "back_right");
         front_left = hardwareMap.get(DcMotor.class, "front_left");
         front_right = hardwareMap.get(DcMotor.class, "front_right");
         //digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-        arm_motor = hardwareMap.get(DcMotor.class, "arm_motor");
-        arm_servo = hardwareMap.get(Servo.class, "arm_servo");
-        //duck_motor = hardwareMap.get(DcMotor.class, "duck_motor");
+       // arm_motor = hardwareMap.get(DcMotor.class, "arm_motor");
+       // arm_servo = hardwareMap.get(Servo.class, "arm_servo");
+       // duck_motor = hardwareMap.get(DcMotor.class, "duck_motor");
 
         // Set Motor Power
-        back_left.setPower(0);
-        back_right.setPower(0);
-        front_left.setPower(0);
-        front_right.setPower(0);
-        arm_motor.setPower(0);
-        arm_servo.setPosition(0);
-        //duck_motor.setPower(0);
+        //back_left.setPower(0);
+        //back_right.setPower(0);
+        //front_left.setPower(0);
+        //front_right.setPower(0);
+      //  arm_motor.setPower(0);
+      //  arm_servo.setPosition(0);
+       // duck_motor.setPower(0);
 
 
         //Something
 
 
         // set the digital channel to input.
-        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+      //  digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
 
         //Set Motor Mode
-        back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // arm_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         //Set Direction
@@ -62,15 +64,15 @@ public class RobotHardware {
         back_right.setDirection(DcMotor.Direction.REVERSE);
         front_left.setDirection(DcMotor.Direction.FORWARD);
         front_right.setDirection(DcMotor.Direction.REVERSE);
-        arm_motor.setDirection(DcMotor.Direction.FORWARD);
-        arm_servo.setDirection(Servo.Direction.FORWARD);
-        //duck_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+       // arm_motor.setDirection(DcMotor.Direction.FORWARD);
+       // arm_servo.setDirection(Servo.Direction.FORWARD);
+       // duck_motor.setDirection(DcMotorSimple.Direction.FORWARD);
         //Set Zero power mode
         back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //duck_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       // arm_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      //  duck_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }
