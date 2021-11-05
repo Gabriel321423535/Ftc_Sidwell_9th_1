@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.units.qual.Angle;
 import org.firstinspires.ftc.teamcode.RobotHardwareOP;
 import org.firstinspires.ftc.teamcode.PushbotAutoDriveByEncoder_Linear;
 
@@ -68,10 +69,10 @@ public class driving extends LinearOpMode {
     // Encoder things
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_INCHES   = 0.5 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                         (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
+    static final double     DRIVE_SPEED             = 0.1;
     static final double     TURN_SPEED              = 0.5;
 
 
@@ -90,6 +91,10 @@ public class driving extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        // Set servo angle
+        int servoAngle = 0;
+
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -97,8 +102,10 @@ public class driving extends LinearOpMode {
             double leftPower;
             double rightPower;
             double clawPower;
-            int servoAngle;
-            servoAngle = 40;
+            boolean servoBool;
+            double duckPower;
+
+
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -111,21 +118,50 @@ public class driving extends LinearOpMode {
             rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
             // Get Claw power
-            if (gamepad1.dpad_up) {
-                clawPower = 1;
-            } else if (gamepad1.dpad_down) {
-                clawPower = -1;
+            if (gamepad1.dpad_down) {
+                clawPower = 0.0006;
+            } else if (gamepad1.dpad_up) {
+                clawPower = -0.006;
             } else {
                 clawPower = 0;
             }
 
-            // Get servo power
-            if (gamepad1.dpad_left) {
-                servoAngle += 10;
-            } else if (gamepad1.dpad_right) {
-                servoAngle += -10;
+            if (gamepad1.dpad_up) {
+                clawPower = -0.015;
+            } else if (gamepad1.dpad_down) {
+                clawPower = 0.006;
+            } else {
+                clawPower = -0.0035;
             }
 
+
+
+            // Get servo power
+            if (gamepad1.dpad_left)  {
+                servoBool = true;
+            } else if (gamepad1.dpad_left) {
+                servoBool = false;
+            }
+
+            // Checking servo Angle
+            if (gamepad1.dpad_left) {
+                servoAngle = -5000;
+            }
+            else if (gamepad1.dpad_right) {
+                servoAngle = 5000;
+            }
+
+            // Setting up duck motor
+
+            if (gamepad1.y) {
+                duckPower = 1.0;
+            }
+            else if (gamepad1.a){
+                duckPower = -1.0;
+            }
+            else {
+                duckPower = 0.0;
+            }
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -141,14 +177,19 @@ public class driving extends LinearOpMode {
             robot.back_right.setPower(rightPower);
             robot.front_right.setPower(rightPower);
 
+            //Set Duck motor
+            robot.duck_motor.setPower(duckPower);
+
             //Set claw and servo
             robot.arm_servo.setPosition(servoAngle);
-            //encoderDrive(DRIVE_SPEED, 1, 1, 3.0);
+
+            encoderDrive(DRIVE_SPEED, clawPower, clawPower, 0.1);
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Servos", "Servo Power (%2d), right (%.2f)", servoAngle, rightPower);
             telemetry.update();
         }
     }
@@ -187,8 +228,8 @@ public class driving extends LinearOpMode {
                         (robot.arm_motor.isBusy())) {
 
                     // Display it for the driver.
-                    telemetry.addData("Path1",  "Running to %7d :%7d", arm_power_target);
-                    telemetry.addData("Path2",  "Running at %7d :%7d", robot.arm_motor.getCurrentPosition());
+                    //telemetry.addData("Path1",  "Running to %7d :%7d", arm_power_target);
+                    //telemetry.addData("Path2",  "Running at %7d", robot.arm_motor.getCurrentPosition());
                     telemetry.update();
                 }
 

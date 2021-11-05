@@ -30,7 +30,7 @@ public class RobotHardware {
         //digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
         arm_motor = hardwareMap.get(DcMotor.class, "arm_motor");
         arm_servo = hardwareMap.get(Servo.class, "arm_servo");
-        //duck_motor = hardwareMap.get(DcMotor.class, "duck_motor");
+        duck_motor = hardwareMap.get(DcMotor.class, "duck_motor");
 
         // Set Motor Power
         back_left.setPower(0);
@@ -38,8 +38,8 @@ public class RobotHardware {
         front_left.setPower(0);
         front_right.setPower(0);
         arm_motor.setPower(0);
-        arm_servo.setPosition(0);
-        //duck_motor.setPower(0);
+        arm_servo.setPosition(180);
+        duck_motor.setPower(0);
 
 
         //Something
@@ -55,6 +55,7 @@ public class RobotHardware {
         front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        duck_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         //Set Direction
@@ -64,13 +65,13 @@ public class RobotHardware {
         front_right.setDirection(DcMotor.Direction.REVERSE);
         arm_motor.setDirection(DcMotor.Direction.FORWARD);
         arm_servo.setDirection(Servo.Direction.FORWARD);
-        //duck_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        duck_motor.setDirection(DcMotorSimple.Direction.FORWARD);
         //Set Zero power mode
         back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //duck_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        duck_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }
