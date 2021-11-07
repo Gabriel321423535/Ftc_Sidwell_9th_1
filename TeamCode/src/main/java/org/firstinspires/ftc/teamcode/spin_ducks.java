@@ -30,66 +30,56 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.checkerframework.checker.units.qual.Angle;
+import org.firstinspires.ftc.teamcode.RobotHardwareOP;
+import org.firstinspires.ftc.teamcode.PushbotAutoDriveByEncoder_Linear;
+
 
 
 
 /**
- * This file allustrates the concept of driving a path based on encoder counts.
- * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is stjuctured as a Lin earOpMode
+ * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
+ * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
+ * class is instantiated on the Robot Controller and executed.
  *
- * The code REQUIRES that you DO have encoders on the wheels,
- *   otherwise you would use: PushbotAutoDriveByTime;
- *
- *  This code ALSO requires that the drive Motors have been configured such that a positive
- *  power command moves them forwards, and causes the encoders to count UP.
- *
- *   The desired path in this example is:
- *   - Drive forward for 48 inches
- *   - Spin right for 12 Inches
- *   - Drive Backwards for 24 inches
- *   - Stop and close the claw.
- *
- *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
- *  that performs the actual movement.
- *  This methods assumes that each movement is relative to the last stopping place.
- *  There are other ways to perform encoder based moves, but this method is probably the simplest.
- *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
+ * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * It includes all the skeletal structure that all linear OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Test")
+@Autonomous(name="spin_ducks", group="Autonomous")
 
-public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
+public class spin_ducks extends LinearOpMode {
 
-    /* Declare OpMode members. */
+    // Declare OpMode members.
+    private ElapsedTime runtime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
-    private ElapsedTime     runtime = new ElapsedTime();
 
+    // Encoder things
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_INCHES   = 3.55 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_SPEED             = 0.8;
+    static final double     TURN_SPEED              = 0.2;
+
 
 
     @Override
     public void runOpMode() {
-
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
-
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -107,11 +97,11 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                          robot.back_left.getCurrentPosition(),
-                          robot.back_right.getCurrentPosition(),
-                          robot.front_left.getCurrentPosition(),
-                          robot.front_right.getCurrentPosition());
+        telemetry.addData("Path0", "Starting at %7d :%7d",
+                robot.back_left.getCurrentPosition(),
+                robot.back_right.getCurrentPosition(),
+                robot.front_left.getCurrentPosition(),
+                robot.front_right.getCurrentPosition());
 
         telemetry.update();
 
@@ -119,29 +109,42 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         waitForStart();
 
         //Turn right
-        encoderDrive(TURN_SPEED,  5,  -5, 5.0);
+        encoderDrive(DRIVE_SPEED, 1.3, 1.3, 3.0);
+        encoderDrive(TURN_SPEED, 6, -6, 5.0);
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        while (robot.digitalTouch.getState() != true) {
-            telemetry.addData("Digital Touch", "Is Not Pressed");
-            encoderDrive(DRIVE_SPEED, 1, 1, 3.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        while (true){
+            if (robot.digitalTouch.getState() == false){
+                telemetry.addData("Pressed", "Sensor");
+                telemetry.update();
+                sleep(1000);
+                break;
+            }
+            else {
+                encoderDrive(DRIVE_SPEED, 0.3, 0.3, 0.2);
+            }
+
             telemetry.update();
         }
-        //
+        telemetry.addData("Moved on", "Updating");
+        telemetry.update();
 
+        // Turn a bit left for spinning
+        encoderDrive(TURN_SPEED, -2.5, 2.5, 2.0);
 
-
-
+        // Spin duck motor
+        for (int i = 0; i < 5; i++) {
+            robot.duck_motor.setPower(0.8);
+            sleep(3000);
+            robot.duck_motor.setPower(0);
+            sleep(1000);
+        }
+        // Turn to bay
+        encoderDrive(DRIVE_SPEED, -3.5, 3.5, 6.0);
+        // DRive to bay
+        encoderDrive(DRIVE_SPEED, 9.5, 9.5, 6.0);
     }
-
-    /*
-     *  Method to perform a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
+    // Encoder drive
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
@@ -183,14 +186,14 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (robot.back_left.isBusy() && robot.back_right.isBusy() && robot.front_left.isBusy() && robot.front_right.isBusy())) {
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.back_left.isBusy() && robot.back_right.isBusy() && robot.front_left.isBusy() && robot.front_right.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", new_back_LeftTarget,  new_front_LeftTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.back_right.getCurrentPosition(),
-                                            robot.back_right.getCurrentPosition());
+                        robot.back_right.getCurrentPosition(),
+                        robot.back_right.getCurrentPosition());
                 telemetry.update();
             }
 

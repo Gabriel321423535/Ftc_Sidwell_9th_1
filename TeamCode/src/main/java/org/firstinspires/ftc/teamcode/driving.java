@@ -72,7 +72,7 @@ public class driving extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 0.5 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                         (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.1;
+    static final double     DRIVE_SPEED             = 0.3;
     static final double     TURN_SPEED              = 0.5;
 
 
@@ -127,11 +127,16 @@ public class driving extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                clawPower = -0.015;
+                clawPower = -0.03;
             } else if (gamepad1.dpad_down) {
                 clawPower = 0.006;
             } else {
                 clawPower = -0.0035;
+            }
+
+            // Claw Power Over drive
+            if (gamepad1.b){
+                clawPower = 0.03;
             }
 
 
@@ -142,6 +147,7 @@ public class driving extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 servoBool = false;
             }
+
 
             // Checking servo Angle
             if (gamepad1.dpad_left) {

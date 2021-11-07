@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
 
 
 public class RobotHardware {
@@ -27,7 +29,7 @@ public class RobotHardware {
         back_right = hardwareMap.get(DcMotor.class, "back_right");
         front_left = hardwareMap.get(DcMotor.class, "front_left");
         front_right = hardwareMap.get(DcMotor.class, "front_right");
-        //digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
         arm_motor = hardwareMap.get(DcMotor.class, "arm_motor");
         arm_servo = hardwareMap.get(Servo.class, "arm_servo");
         duck_motor = hardwareMap.get(DcMotor.class, "duck_motor");
@@ -46,7 +48,7 @@ public class RobotHardware {
 
 
         // set the digital channel to input.
-        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
 
         //Set Motor Mode
@@ -59,10 +61,10 @@ public class RobotHardware {
 
 
         //Set Direction
-        back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
-        front_left.setDirection(DcMotor.Direction.FORWARD);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
+        front_right.setDirection(DcMotor.Direction.FORWARD);
         arm_motor.setDirection(DcMotor.Direction.FORWARD);
         arm_servo.setDirection(Servo.Direction.FORWARD);
         duck_motor.setDirection(DcMotorSimple.Direction.FORWARD);
