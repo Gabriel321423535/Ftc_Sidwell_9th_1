@@ -31,19 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.checkerframework.checker.units.qual.Angle;
-import org.firstinspires.ftc.teamcode.RobotHardwareOP;
-import org.firstinspires.ftc.teamcode.PushbotAutoDriveByEncoder_Linear;
-
-
 
 
 /**
@@ -59,23 +48,31 @@ import org.firstinspires.ftc.teamcode.PushbotAutoDriveByEncoder_Linear;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="spin_ducks", group="Autonomous")
+@Autonomous(name="a_up_blue_1", group="Autonomous")
 
-public class spin_ducks extends LinearOpMode {
+public class a_up_blue_1 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
 
     // Encoder things
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 3.55 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.8;
-    static final double     TURN_SPEED              = 0.2;
+    static final double     COUNTS_PER_MOTOR_REV_1    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION_1    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES_1   = 3.55 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH_1         = (COUNTS_PER_MOTOR_REV_1 * DRIVE_GEAR_REDUCTION_1) /
+            (WHEEL_DIAMETER_INCHES_1 * 3.1415);
+    static final double     DRIVE_SPEED_1             = 0.8;
+    static final double     TURN_SPEED_1             = 0.2;
 
+    // Encoder things
+    static final double     COUNTS_PER_MOTOR_REV_2    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION_2    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES_2   = 0.5 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH_2         = (COUNTS_PER_MOTOR_REV_2 * DRIVE_GEAR_REDUCTION_2) /
+            (WHEEL_DIAMETER_INCHES_2 * 3.1415);
+    static final double     DRIVE_SPEED_2             = 0.1;
+    static final double     TURN_SPEED_2              = 0.5;
 
 
     @Override
@@ -108,43 +105,40 @@ public class spin_ducks extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        //Turn right
-        encoderDrive(DRIVE_SPEED, 1.3, 1.3, 3.0);
-        encoderDrive(TURN_SPEED, 6, -6, 5.0);
+        // Tighten arm
+        robot.arm_servo.setPosition(-10000);
+        //Go Towards Tower
+        encoderDrive(DRIVE_SPEED_1, 3.9, 3.9, 8.0);
+        // Lift Arm to top
+        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.0258);
+
+        robot.arm_motor.setPower(-0.0005);
+
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED_1, 3.3, 3.3, 8.0);
+        // Servo releases
+        sleep(2000);
+        robot.arm_servo.setPosition(5000);
+        sleep(5000);
+        // Put Arm back down
+        encoderDrivearm(DRIVE_SPEED_2, -0.01,-0.01, 1.00);
+        robot.arm_motor.setPower(0);
+
+
+        // Reverse
+        encoderDrive(DRIVE_SPEED_1, -6, -6, 4.0);
+        // Turn to Big bay
+        encoderDrive(TURN_SPEED_1, -5, 5, 4.0);
+
+        // Drive forward a bit
+        encoderDrive(DRIVE_SPEED_1, 34, 34, 6.0);
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        while (true){
-            if (robot.digitalTouch.getState() == false){
-                telemetry.addData("Pressed", "Sensor");
-                telemetry.update();
-                sleep(1000);
-                break;
-            }
-            else {
-                encoderDrive(DRIVE_SPEED, 0.3, 0.3, 0.2);
-            }
 
-            telemetry.update();
-        }
         telemetry.addData("Moved on", "Updating");
         telemetry.update();
 
-        // Turn a bit left for spinning
-        encoderDrive(TURN_SPEED, -2.5, 2.5, 2.0);
 
-        robot.arm_motor.setPower(0);
-
-        // Spin duck motor
-        for (int i = 0; i < 1; i++) {
-            robot.duck_motor.setPower(0.8);
-            sleep(3000);
-            robot.duck_motor.setPower(0);
-            sleep(1000);
-        }
-        // Turn to bay
-        encoderDrive(DRIVE_SPEED, -3.5, 3.5, 6.0);
-        // DRive to bay
-        encoderDrive(DRIVE_SPEED, 9.5, 9.5, 6.0);
     }
     // Encoder drive
     public void encoderDrive(double speed,
@@ -159,10 +153,10 @@ public class spin_ducks extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            new_back_LeftTarget = robot.back_left.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            new_back_RightTarget = robot.back_right.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            new_front_LeftTarget = robot.back_left.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            new_front_RightTarget = robot.back_right.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            new_back_LeftTarget = robot.back_left.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH_1);
+            new_back_RightTarget = robot.back_right.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH_1);
+            new_front_LeftTarget = robot.back_left.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH_1);
+            new_front_RightTarget = robot.back_right.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH_1);
             robot.back_left.setTargetPosition(new_back_LeftTarget);
             robot.back_right.setTargetPosition(new_back_RightTarget);
             robot.front_left.setTargetPosition(new_front_LeftTarget);
@@ -210,6 +204,56 @@ public class spin_ducks extends LinearOpMode {
             robot.back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+    // Encoder drive
+    public void encoderDrivearm(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+        int arm_power_target;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            arm_power_target = robot.arm_motor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH_2);
+            robot.arm_motor.setTargetPosition(arm_power_target);
+
+
+            // Turn On RUN_TO_POSITION
+            robot.arm_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.arm_motor.setPower(Math.abs(speed));
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.arm_motor.isBusy())) {
+
+                // Display it for the driver.
+                //telemetry.addData("Path1",  "Running to %7d :%7d", arm_power_target);
+                //telemetry.addData("Path2",  "Running at %7d", robot.arm_motor.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.arm_motor.setPower(0);
+
+
+            // Turn off RUN_TO_POSITION
+            robot.arm_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
             //  sleep(250);   // optional pause after each move
         }

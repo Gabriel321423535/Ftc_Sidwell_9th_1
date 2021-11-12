@@ -39,8 +39,8 @@ public class RobotHardware {
         back_right.setPower(0);
         front_left.setPower(0);
         front_right.setPower(0);
-        arm_motor.setPower(0);
-        arm_servo.setPosition(180);
+        arm_motor.setPower(-0.0035);
+        arm_servo.setPosition(-5000);
         duck_motor.setPower(0);
 
 

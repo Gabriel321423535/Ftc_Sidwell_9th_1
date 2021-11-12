@@ -31,19 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.checkerframework.checker.units.qual.Angle;
-import org.firstinspires.ftc.teamcode.RobotHardwareOP;
-import org.firstinspires.ftc.teamcode.PushbotAutoDriveByEncoder_Linear;
-
-
 
 
 /**
@@ -82,7 +71,7 @@ public class a_up_blue extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES_2   = 0.5 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH_2         = (COUNTS_PER_MOTOR_REV_2 * DRIVE_GEAR_REDUCTION_2) /
             (WHEEL_DIAMETER_INCHES_2 * 3.1415);
-    static final double     DRIVE_SPEED_2             = 0.3;
+    static final double     DRIVE_SPEED_2             = 0.1;
     static final double     TURN_SPEED_2              = 0.5;
 
 
@@ -117,54 +106,39 @@ public class a_up_blue extends LinearOpMode {
         waitForStart();
 
         // Tighten arm
-        robot.arm_servo.setPosition(5000);
+        robot.arm_servo.setPosition(-10000);
         //Go Towards Tower
-        encoderDrive(DRIVE_SPEED_1, 12, 12, 8.0);
+        encoderDrive(DRIVE_SPEED_1, 3.9, 3.9, 8.0);
         // Lift Arm to top
-        encoderDrivearm(DRIVE_SPEED_2, 0.1, 0.1, 2.0);
+        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.0255);
+
+        robot.arm_motor.setPower(-0.0005);
+
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED_1, 3.5, 3.5, 8.0);
         // Servo releases
-        robot.arm_servo.setPosition(-5000);
+        sleep(2000);
+        robot.arm_servo.setPosition(5000);
+        sleep(5000);
         // Put Arm back down
-        encoderDrivearm(DRIVE_SPEED_2, -0.1,-0.1, 2.0);
+        encoderDrivearm(DRIVE_SPEED_2, -0.01,-0.01, 1.00);
+        robot.arm_motor.setPower(0);
 
 
-        // Turn Towards Carousel
-        encoderDrive(TURN_SPEED_1, 6, -6, 4.0);
+        // Reverse
+        encoderDrive(DRIVE_SPEED_1, -6, -6, 4.0);
+        // Turn to Big bay
+        encoderDrive(TURN_SPEED_1, -5, 5, 4.0);
 
         // Drive forward a bit
-        encoderDrive(DRIVE_SPEED_1, 12, 12, 6.0);
+        encoderDrive(DRIVE_SPEED_1, 34, 34, 6.0);
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        while (true){
-            if (robot.digitalTouch.getState() == false){
-                telemetry.addData("Pressed", "Sensor");
-                telemetry.update();
-                sleep(1000);
-                break;
-            }
-            else {
-                encoderDrive(DRIVE_SPEED_1, 0.3, 0.3, 0.2);
-            }
 
-            telemetry.update();
-        }
         telemetry.addData("Moved on", "Updating");
         telemetry.update();
 
-        // Turn a bit left for spinning
-        encoderDrive(TURN_SPEED_1, -2.5, 2.5, 2.0);
 
-        // Spin duck motor
-        for (int i = 0; i < 1; i++) {
-            robot.duck_motor.setPower(0.8);
-            sleep(3000);
-            robot.duck_motor.setPower(0);
-            sleep(1000);
-        }
-        // Turn to bay
-        encoderDrive(DRIVE_SPEED_1, -3.5, 3.5, 6.0);
-        // DRive to bay
-        encoderDrive(DRIVE_SPEED_1, 9.5, 9.5, 6.0);
     }
     // Encoder drive
     public void encoderDrive(double speed,
@@ -236,8 +210,8 @@ public class a_up_blue extends LinearOpMode {
     }
     // Encoder drive
     public void encoderDrivearm(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
+                                double leftInches, double rightInches,
+                                double timeoutS) {
         int arm_power_target;
 
         // Ensure that the opmode is still active
