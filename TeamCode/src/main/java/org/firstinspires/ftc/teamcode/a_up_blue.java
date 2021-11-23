@@ -110,7 +110,7 @@ public class a_up_blue extends LinearOpMode {
         //Go Towards Tower
         encoderDrive(DRIVE_SPEED_1, 3.9, 3.9, 8.0);
         // Lift Arm to top
-        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.0255);
+        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.025);
 
         robot.arm_motor.setPower(-0.0005);
 

@@ -48,9 +48,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="a_up_blue_1", group="Autonomous")
+@Autonomous(name="a_low_blue_1", group="Autonomous")
 
-public class a_up_blue_1 extends LinearOpMode {
+public class a_low_blue_1 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -108,25 +108,27 @@ public class a_up_blue_1 extends LinearOpMode {
         // Tighten arm
         robot.arm_servo.setPosition(-10000);
         //Go Towards Tower
-        encoderDrive(DRIVE_SPEED_1, 3.9, 3.9, 8.0);
+        encoderDrive(DRIVE_SPEED_1, 1, 1, 8.0);
         // Lift Arm to top
-        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.02);
+        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.15 );
 
         robot.arm_motor.setPower(-0.0005);
 
-        sleep(5000);
-        encoderDrive(DRIVE_SPEED_1, 3.8, 3.8, 8.0);
+        encoderDrive(DRIVE_SPEED_1, 3, 3, 8.0);
+        sleep(2000);
+
         // Servo releases
         sleep(2000);
         robot.arm_servo.setPosition(5000);
         sleep(5000);
-        // Put Arm back down
-        encoderDrivearm(DRIVE_SPEED_2, -0.01,-0.01, 0.8);
+        // Reverse
+        encoderDrive(DRIVE_SPEED_1, -6, -6, 4.0);
+        // Put Arm back downs
+        encoderDrivearm(DRIVE_SPEED_2, -0.01,-0.01, 0.9);
         robot.arm_motor.setPower(0);
 
 
-        // Reverse
-        encoderDrive(DRIVE_SPEED_1, -6, -6, 4.0);
+
         // Turn to Big bay
         encoderDrive(TURN_SPEED_1, -5, 5, 4.0);
 
