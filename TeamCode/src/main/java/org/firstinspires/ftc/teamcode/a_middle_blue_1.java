@@ -110,7 +110,7 @@ public class a_middle_blue_1 extends LinearOpMode {
         //Go Towards Tower
         encoderDrive(DRIVE_SPEED_1, 3, 3, 8.0);
         // Lift Arm to top
-        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.083);
+        encoderDrivearm(DRIVE_SPEED_2, 0.01, 0.01, 1.2);
 
         encoderDrive(DRIVE_SPEED_1, 1, 1, 8.0);
         sleep(2000);
