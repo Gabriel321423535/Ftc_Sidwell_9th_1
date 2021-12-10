@@ -27,46 +27,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+
 
 /**
- * {@link SensorMRRangeSensor} illustrates how to use the Modern Robotics
- * Range Sensor.
+ * This file contains an example of an iterative (Non-Linear) "OpMode".
+ * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
+ * The names of OpModes appear on the menu of the FTC Driver Station.
+ * When an selection is made from the menu, the corresponding OpMode
+ * class is instantiated on the Robot Controller and executed.
  *
- * The op mode assumes that the range sensor is configured with a name of "sensor_range".
+ * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * It includes all the skeletal structure that all iterative OpModes contain.
  *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- *
- * @see <a href="http://modernroboticsinc.com/range-sensor">MR Range Sensor</a>
  */
-@TeleOp(name = "Sensor: MR range sensor", group = "Sensor")
-// comment out or remove this line to enable this opmode
-public class SensorMRRangeSensor extends LinearOpMode {
 
-    ModernRoboticsI2cRangeSensor rangeSensor;
 
-    @Override public void runOpMode() {
+public class dataCollection extends OpenCvPipeline{
+    int i = 0;
+    Mat mat = new Mat();
 
-        // get a reference to our compass
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
-
-        // wait for the start button to be pressed
-        waitForStart();
-
-        while (opModeIsActive()) {
-            telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
-            telemetry.addData("raw optical", rangeSensor.rawOptical());
-            telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
-            telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
-            telemetry.update();
-        }
+    @Override
+    public Mat processFrame(Mat input){
+        Imgcodecs.imwrite(String.valueOf(i), input);
+        i+=1;
+        return mat;
     }
 }

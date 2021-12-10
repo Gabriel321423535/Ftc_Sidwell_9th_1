@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 
 
 
@@ -20,6 +25,7 @@ public class RobotHardware {
     public DcMotor duck_motor;
     public Servo arm_servo;
     public DigitalChannel digitalTouch;
+    public DistanceSensor sensorRange;
 
 
     HardwareMap hardwareMap;
@@ -33,6 +39,11 @@ public class RobotHardware {
         arm_motor = hardwareMap.get(DcMotor.class, "arm_motor");
         arm_servo = hardwareMap.get(Servo.class, "arm_servo");
         duck_motor = hardwareMap.get(DcMotor.class, "duck_motor");
+
+        //sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+
+        // you can also cast this to a Rev2mDistanceSensor if you want to use added
+        // methods associated with the Rev2mDistanceSensor class.
 
         // Set Motor Power
         back_left.setPower(0);
@@ -68,7 +79,8 @@ public class RobotHardware {
         arm_motor.setDirection(DcMotor.Direction.FORWARD);
         arm_servo.setDirection(Servo.Direction.FORWARD);
         duck_motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Set Zero power mode
+        //Set
+        // Zero power mode
         back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

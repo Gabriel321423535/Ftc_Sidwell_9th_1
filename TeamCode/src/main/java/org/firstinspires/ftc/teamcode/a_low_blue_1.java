@@ -110,7 +110,7 @@ public class a_low_blue_1 extends LinearOpMode {
         //Go Towards Tower
         encoderDrive(DRIVE_SPEED_1, 1, 1, 8.0);
         // Lift Arm to top
-        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.15 );
+        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.15);
 
         robot.arm_motor.setPower(-0.0005);
 
@@ -122,7 +122,7 @@ public class a_low_blue_1 extends LinearOpMode {
         robot.arm_servo.setPosition(5000);
         sleep(5000);
         // Reverse
-        encoderDrive(DRIVE_SPEED_1, -6, -6, 4.0);
+        encoderDrive(DRIVE_SPEED_1, -2, -2, 4.0);
         // Put Arm back downs
         encoderDrivearm(DRIVE_SPEED_2, -0.01,-0.01, 0.9);
         robot.arm_motor.setPower(0);

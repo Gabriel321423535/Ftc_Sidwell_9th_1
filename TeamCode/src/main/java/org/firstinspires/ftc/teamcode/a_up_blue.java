@@ -110,33 +110,65 @@ public class a_up_blue extends LinearOpMode {
         //Go Towards Tower
         encoderDrive(DRIVE_SPEED_1, 3.9, 3.9, 8.0);
         // Lift Arm to top
-        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.025);
+        encoderDrivearm(DRIVE_SPEED_2, 0.02, 0.02, 1.008);
 
         robot.arm_motor.setPower(-0.0005);
 
         sleep(5000);
-        encoderDrive(DRIVE_SPEED_1, 3.5, 3.5, 8.0);
+        encoderDrive(DRIVE_SPEED_1, 3.8, 3.8, 8.0);
         // Servo releases
         sleep(2000);
         robot.arm_servo.setPosition(5000);
         sleep(5000);
         // Put Arm back down
-        encoderDrivearm(DRIVE_SPEED_2, -0.01,-0.01, 1.00);
+        encoderDrivearm(DRIVE_SPEED_2, -0.01,-0.01, 0.8);
         robot.arm_motor.setPower(0);
 
 
         // Reverse
         encoderDrive(DRIVE_SPEED_1, -6, -6, 4.0);
         // Turn to Big bay
-        encoderDrive(TURN_SPEED_1, -5, 5, 4.0);
+        encoderDrive(TURN_SPEED_1, 8, -8, 4.0);
 
         // Drive forward a bit
-        encoderDrive(DRIVE_SPEED_1, 34, 34, 6.0);
+        encoderDrive(DRIVE_SPEED_1, 8, 8, 2.0);
+
+        // Move a bit to check if button is touching
+        while (true){
+            if (robot.digitalTouch.getState() == false){
+                telemetry.addData("Pressed", "Sensor");
+                telemetry.update();
+                sleep(1000);
+                break;
+            }
+            else {
+                encoderDrive(DRIVE_SPEED_1, 0.3, 0.3, 0.2);
+            }
+
+            telemetry.update();
+        }
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
         telemetry.addData("Moved on", "Updating");
         telemetry.update();
+
+        // Turn a bit left for spinning
+        encoderDrive(TURN_SPEED_1, -2.5, 2.5, 2.0);
+
+        robot.arm_motor.setPower(0);
+
+        // Spin duck motor
+        for (int i = 0; i < 1; i++) {
+            robot.duck_motor.setPower(0.8);
+            sleep(3000);
+            robot.duck_motor.setPower(0);
+            sleep(1000);
+        }
+        // Turn to bay
+        encoderDrive(DRIVE_SPEED_1, -3.5, 3.5, 6.0);
+        // DRive to bay
+        encoderDrive(DRIVE_SPEED_1, 9.5, 9.5, 6.0);
 
 
     }
